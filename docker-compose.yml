@@ -5,50 +5,50 @@ services:
     container_name: jatumba_django
     restart: always
     build:
-      context: .
+      context: jatumba-backend
       dockerfile: Dockerfile.django
-    env_file: .env
+    env_file: jatumba-backend/.env
     ports:
       - "8000:8000"
     links:
       - postgres:postgres
       - redis:redis
     volumes:
-      - /var/log/jatumba/gunicorn:/var/log/gunicorn
+      - /tmp/jatumba/gunicorn:/var/log/gunicorn
       - /usr/src/app/static
 
   daphne:
     container_name: jatumba_daphne
     restart: always
     build:
-      context: .
+      context: jatumba-backend
       dockerfile: Dockerfile.daphne
-    env_file: .env
+    env_file: jatumba-backend/.env
     ports:
       - "9000:9000"
     links:
       - postgres:postgres
       - redis:redis
     volumes:
-      - /var/log/jatumba/daphne:/var/log/daphne
+      - /tmp/jatumba/daphne:/var/log/daphne
 
   worker:
     container_name: jatumba_worker
     restart: always
     build:
-      context: .
+      context: jatumba-backend
       dockerfile: Dockerfile.worker
-    env_file: .env
+    env_file: jatumba-backend/.env
     links:
       - postgres:postgres
       - redis:redis
     volumes:
-      - /var/log/jatumba/worker:/var/log/worker
+      - /tmp/jatumba/worker:/var/log/worker
 
   nginx:
     container_name: jatumba_nginx
     restart: always
-    build: ./server_configurations/nginx/
+    build: jatumba-nginx
     ports:
       - "8080:80"
     volumes:
