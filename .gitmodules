@@ -1,0 +1,9 @@
+[submodule "jatumba-backend"]
+	path = jatumba-backend
+	url = git@github.com:YetAnotherTeam/jatumba-backend.git
+[submodule "jatumba-frontend"]
+	path = jatumba-frontend
+	url = git@github.com:YetAnotherTeam/jatumba-frontend.git
+[submodule "jatumba-nginx"]
+	path = jatumba-nginx
+	url = git@github.com:YetAnotherTeam/jatumba-nginx.git
