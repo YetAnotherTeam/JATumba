@@ -45,6 +45,11 @@ services:
     volumes:
       - /tmp/jatumba/worker:/var/log/worker
 
+  frontend:
+    container_name: jatumba_frontend
+    restart: always
+    build: jatumba-frontend
+
   nginx:
     container_name: jatumba_nginx
     restart: always
@@ -54,7 +59,8 @@ services:
     volumes:
       - /www/static
     volumes_from:
-      - django
+      - django:ro
+      - frontend:ro
     links:
       - django:django
 
