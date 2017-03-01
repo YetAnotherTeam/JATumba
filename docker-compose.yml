@@ -53,7 +53,9 @@ services:
   nginx:
     container_name: jatumba_nginx
     restart: always
-    build: jatumba-nginx
+    build:
+      context: jatumba-nginx
+      dockerfile: Dockerfile.dev
     ports:
       - "8080:80"
     volumes:
