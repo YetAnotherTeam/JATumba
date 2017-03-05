@@ -1,85 +1,112 @@
-version: "2"
+version: "3"
 
 services:
   django:
-    container_name: jatumba_django
-    restart: always
     build:
       context: jatumba-backend
       dockerfile: Dockerfile.django
-    env_file: jatumba-backend/.env
-    ports:
-      - "8000:8000"
+    container_name: jatumba_django
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    external_links:
+      - nginx:nginx
     links:
       - postgres:postgres
       - redis:redis
+    ports:
+      - "8000:8000"
+    restart: always
     volumes:
-      - /tmp/jatumba/gunicorn:/var/log/gunicorn
-      - /usr/src/app/static
+      - logs:/var/log/
+      - static:/static
+      - media:/media
 
   daphne:
-    container_name: jatumba_daphne
-    restart: always
     build:
       context: jatumba-backend
       dockerfile: Dockerfile.daphne
-    env_file: jatumba-backend/.env
-    ports:
-      - "9000:9000"
+    container_name: jatumba_daphne
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    external_links:
+      - nginx:nginx
     links:
       - postgres:postgres
       - redis:redis
+    ports:
+      - "9000:9000"
+    restart: always
     volumes:
-      - /tmp/jatumba/daphne:/var/log/daphne
+      - logs:/var/log/
 
   worker:
-    container_name: jatumba_worker
-    restart: always
     build:
       context: jatumba-backend
       dockerfile: Dockerfile.worker
-    env_file: jatumba-backend/.env
+    container_name: jatumba_worker
+    depends_on:
+      - postgres
+      - redis
+    env_file: .env
+    external_links:
+      - nginx:nginx
     links:
       - postgres:postgres
       - redis:redis
+    restart: always
     volumes:
-      - /tmp/jatumba/worker:/var/log/worker
+      - logs:/var/log/
 
   frontend:
-    container_name: jatumba_frontend
-    restart: always
     build: jatumba-frontend
+    container_name: jatumba_frontend
+    volumes:
+      - frontend-data:/frontend
 
   nginx:
-    container_name: jatumba_nginx
-    restart: always
     build:
       context: jatumba-nginx
       dockerfile: Dockerfile.dev
-    ports:
-      - "8080:80"
-    volumes:
-      - /www/static
-    volumes_from:
-      - django:ro
-      - frontend:ro
+    container_name: jatumba_nginx
+    depends_on:
+      - frontend
     links:
       - django:django
+      - daphne:daphne
+    ports:
+      - "3000:80"
+    restart: always
+    volumes:
+      - static:/jatumba/backend/static
+      - media:/jatumba/backend/media
+      - frontend-data:/jatumba/frontend
 
   postgres:
     container_name: jatumba_postgres
-    restart: always
     image: postgres:latest
     ports:
       - "5432:5432"
+    restart: always
     volumes:
-      - /var/lib/postgresql/data/
+      - posgres-data:/var/lib/postgresql/data/
 
   redis:
     container_name: jatumba_redis
-    restart: always
     image: redis:latest
     ports:
       - "6379:6379"
+    restart: always
     volumes:
-      - /data
+      - redis-data:/data
+
+volumes:
+  logs:
+  media:
+  static:
+  frontend-data:
+  redis-data:
+  posgres-data:
