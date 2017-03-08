@@ -19,7 +19,7 @@ services:
       - "8000:8000"
     restart: always
     volumes:
-      - logs:/var/log/
+      - /tmp/jatumba/gunicorn:/var/log/gunicorn
       - static:/static
       - media:/media
 
@@ -41,7 +41,7 @@ services:
       - "9000:9000"
     restart: always
     volumes:
-      - logs:/var/log/
+      - /tmp/jatumba/daphne:/var/log/daphne
 
   worker:
     build:
@@ -58,8 +58,6 @@ services:
       - postgres:postgres
       - redis:redis
     restart: always
-    volumes:
-      - logs:/var/log/
 
   frontend:
     build: jatumba-frontend
@@ -81,9 +79,9 @@ services:
       - "3000:80"
     restart: always
     volumes:
-      - static:/jatumba/backend/static
-      - media:/jatumba/backend/media
-      - frontend-data:/jatumba/frontend
+      - static:/jatumba/backend/static:ro
+      - media:/jatumba/backend/media:ro
+      - frontend-data:/jatumba/frontend:ro
 
   postgres:
     container_name: jatumba_postgres
@@ -104,7 +102,6 @@ services:
       - redis-data:/data
 
 volumes:
-  logs:
   media:
   static:
   frontend-data:
