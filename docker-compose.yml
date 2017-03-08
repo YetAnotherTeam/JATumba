@@ -31,6 +31,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - worker
     env_file: .env
     external_links:
       - nginx:nginx
@@ -72,6 +73,8 @@ services:
     container_name: jatumba_nginx
     depends_on:
       - frontend
+      - django
+      - daphne
     links:
       - django:django
       - daphne:daphne
