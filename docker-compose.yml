@@ -93,7 +93,7 @@ services:
       - "5432:5432"
     restart: always
     volumes:
-      - posgres-data:/var/lib/postgresql/data/
+      - postgres-data:/var/lib/postgresql/data/
 
   redis:
     container_name: jatumba_redis
@@ -109,4 +109,4 @@ volumes:
   static:
   frontend-data:
   redis-data:
-  posgres-data:
+  postgres-data:
