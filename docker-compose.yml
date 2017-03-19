@@ -2,9 +2,6 @@ version: "3"
 
 services:
   django:
-    build:
-      context: jatumba-backend
-      dockerfile: Dockerfile.django
     container_name: jatumba_django
     depends_on:
       - postgres
@@ -12,6 +9,7 @@ services:
     env_file: .env
     external_links:
       - nginx:nginx
+    image: bkhasanov/jatumba-backend-django:latest
     links:
       - postgres:postgres
       - redis:redis
@@ -24,9 +22,6 @@ services:
       - media:/media
 
   daphne:
-    build:
-      context: jatumba-backend
-      dockerfile: Dockerfile.daphne
     container_name: jatumba_daphne
     depends_on:
       - postgres
@@ -35,6 +30,7 @@ services:
     env_file: .env
     external_links:
       - nginx:nginx
+    image: bkhasanov/jatumba-backend-daphne:latest
     links:
       - postgres:postgres
       - redis:redis
@@ -45,9 +41,6 @@ services:
       - /tmp/jatumba/daphne:/var/log/daphne
 
   worker:
-    build:
-      context: jatumba-backend
-      dockerfile: Dockerfile.worker
     container_name: jatumba_worker
     depends_on:
       - postgres
@@ -55,14 +48,15 @@ services:
     env_file: .env
     external_links:
       - nginx:nginx
+    image: bkhasanov/jatumba-backend-worker:latest
     links:
       - postgres:postgres
       - redis:redis
     restart: always
 
   frontend:
-    build: jatumba-frontend
     container_name: jatumba_frontend
+    image: bkhasanov/jatumba-frontend:latest
     volumes:
       - frontend-data:/frontend
 
